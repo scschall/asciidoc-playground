@@ -1,0 +1,50 @@
+name: Convert AsciiDoc to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # oder master, je nachdem welchen Branch-Namen Sie verwenden
+  workflow_dispatch:  # erlaubt manuelle Ausführung
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install Asciidoctor
+        run: |
+          gem install asciidoctor
+          gem install rouge  # für Syntax-Highlighting
+
+      - name: Convert AsciiDoc to HTML
+        run: |
+          mkdir -p _site
+          asciidoctor -D _site *.adoc
+          cp -r images _site/ || true  # kopiert Bilder, falls vorhanden
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 
