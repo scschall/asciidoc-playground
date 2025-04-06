@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
+<%#encoding:UTF-8%><!DOCTYPE html>
+<html lang="<%= attr :lang, 'en' %>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= document.title %></title>
-    <link rel="stylesheet" href="<%= (attr :stylesdir, '.') %>/<%= (attr :stylesheet, 'asciidoctor.css') %>">
+    <title><%= doctitle %></title>
+    <%= styles %>
     <style>
         #search-container {
             position: fixed;
@@ -31,33 +31,25 @@
             border: 1px solid #ddd;
             background: white;
         }
-        #content {
-            margin-top: 60px;
-        }
     </style>
 </head>
-<body class="<%= attr :doctype %>">
+<body<%= @id && %( id="#{@id}") %> class="<%= [(attr :doctype),*((attr :role)&.split(' '))]* ' ' %>">
     <div id="search-container">
         <input type="text" id="search-input" placeholder="Suchen...">
         <div id="search-results"></div>
     </div>
-    
-    <div id="content">
-        <%= document.convert %>
-    </div>
+
+    <%= content %>
 
     <script src="https://unpkg.com/lunr/lunr.js"></script>
     <script>
         let idx;
         let documents = {};
 
-        // Suchindex laden und erstellen
         fetch('search-index.json')
             .then(response => response.json())
             .then(data => {
                 documents = data;
-                
-                // Index erstellen
                 idx = lunr(function() {
                     this.ref('id');
                     this.field('title');
@@ -73,7 +65,6 @@
                 });
             });
 
-        // Suchfunktion
         document.getElementById('search-input').addEventListener('input', function(e) {
             const query = e.target.value;
             const results = document.getElementById('search-results');
