@@ -29,6 +29,7 @@ jobs:
           gem install asciidoctor
           gem install rouge
           gem install json
+          gem install tilt
 
       - name: Generate Search Index
         run: ruby scripts/generate_search_index.rb
