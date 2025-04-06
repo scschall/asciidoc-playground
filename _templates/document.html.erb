@@ -1,10 +1,18 @@
 <%#encoding:UTF-8%><!DOCTYPE html>
 <html lang="<%= attr :lang, 'en' %>">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="<%= attr :encoding %>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Asciidoctor <%= attr 'asciidoctor-version' %>">
     <title><%= doctitle %></title>
-    <%= styles %>
+    <% if Asciidoctor::DEFAULT_STYLESHEET_KEYS.include?(attr :stylesheet) %>
+    <link rel="stylesheet" href="<%= normalize_web_path(Asciidoctor::DEFAULT_STYLESHEET_NAME, (attr :stylesdir, '')) %>">
+    <% elsif attr? :stylesheet %>
+    <link rel="stylesheet" href="<%= normalize_web_path((attr :stylesheet), (attr :stylesdir, '')) %>">
+    <% end %>
+    <% if attr? :icons, 'font' %>
+    <link rel="stylesheet" href="<%= normalize_web_path(Asciidoctor::DEFAULT_FONTAWESOME_STYLESHEET_NAME, (attr :stylesdir, '')) %>">
+    <% end %>
     <style>
         #search-container {
             position: fixed;
@@ -33,7 +41,7 @@
         }
     </style>
 </head>
-<body<%= @id && %( id="#{@id}") %> class="<%= [(attr :doctype),*((attr :role)&.split(' '))]* ' ' %>">
+<body class="<%= [(attr :doctype),*((attr :role)&.split(' '))]* ' ' %>"<%= (attr? :max-width) ? %( style="max-width: #{attr 'max-width'};") : nil %>>
     <div id="search-container">
         <input type="text" id="search-input" placeholder="Suchen...">
         <div id="search-results"></div>
