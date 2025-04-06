@@ -24,16 +24,32 @@ jobs:
           ruby-version: '3.2'
           bundler-cache: true
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install lunr-index-build
+        run: npm install -g lunr-index-build
+
       - name: Install Asciidoctor
         run: |
           gem install asciidoctor
-          gem install rouge  # für Syntax-Highlighting
+          gem install rouge
+          gem install json
+
+      - name: Generate Search Index
+        run: ruby scripts/generate_search_index.rb
 
       - name: Convert AsciiDoc to HTML
         run: |
           mkdir -p _site
-          asciidoctor -D _site *.adoc
-          cp -r images _site/ || true  # kopiert Bilder, falls vorhanden
+          asciidoctor \
+            -T _templates \
+            -r ./extensions/yaml_table.rb \
+            -D _site \
+            *.adoc
+          cp -r images _site/ || true
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

@@ -16,7 +16,12 @@ include::tools.adoc[]
 
 == Include list from YAML
 
-[%yaml,cols="1,2",options="header,autowidth,frame=none"]
-|===
+.Maybe a table
+[source,yaml]
+----
 include::list.yaml[]
-|===
+----
+
+,===
+include::list.yaml[]
+,===
