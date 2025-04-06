@@ -1,3 +1,9 @@
+:doctype: book
+:toc: left
+:toclevels: 3
+:icons: font
+
+
 = Some Playground
 
 This is a playground for me to try out new things.
