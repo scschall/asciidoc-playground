@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="Asciidoctor <%= attr 'asciidoctor-version' %>">
     <title><%= doctitle %></title>
-    <% if Asciidoctor::DEFAULT_STYLESHEET_KEYS.include?(attr :stylesheet) %>
-    <link rel="stylesheet" href="<%= normalize_web_path(Asciidoctor::DEFAULT_STYLESHEET_NAME, (attr :stylesdir, '')) %>">
-    <% elsif attr? :stylesheet %>
+    <% if attr? :stylesheet %>
     <link rel="stylesheet" href="<%= normalize_web_path((attr :stylesheet), (attr :stylesdir, '')) %>">
+    <% else %>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/asciidoctor.js/1.5.9/css/asciidoctor.min.css">
     <% end %>
     <% if attr? :icons, 'font' %>
-    <link rel="stylesheet" href="<%= normalize_web_path(Asciidoctor::DEFAULT_FONTAWESOME_STYLESHEET_NAME, (attr :stylesdir, '')) %>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <% end %>
     <style>
         #search-container {
