@@ -27,26 +27,5 @@ adoc_files.each do |file|
   documents[file] = doc
 end
 
-# Lunr Index generieren
-lunr_docs = documents.map do |id, doc|
-  {
-    'id' => id,
-    'title' => doc['title'],
-    'content' => doc['content']
-  }
-end
-
-# Temporäre JSON-Datei für lunr-index-build erstellen
-File.write('_site/temp_docs.json', JSON.generate(lunr_docs))
-
-# Lunr Index mit korrekten Parametern generieren
-index = `npx lunr-index-build -r id -f title -f content < _site/temp_docs.json`
-
-# Finale JSON-Datei mit Dokumenten und Index speichern
-File.write('_site/search-index.json', JSON.generate({
-  'documents' => documents,
-  'index' => JSON.parse(index)
-}))
-
-# Temporäre Datei löschen
-FileUtils.rm('_site/temp_docs.json') 
+# Suchindex als JSON speichern
+File.write('_site/search-index.json', JSON.generate(documents)) 

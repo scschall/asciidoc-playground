@@ -32,17 +32,30 @@
     <%= document.content %>
 
     <script src="https://unpkg.com/lunr/lunr.js"></script>
-    <script src="search-index.json"></script>
     <script>
         let idx;
         let documents = {};
 
-        // Suchindex laden
+        // Suchindex laden und erstellen
         fetch('search-index.json')
             .then(response => response.json())
             .then(data => {
-                documents = data.documents;
-                idx = lunr.Index.load(data.index);
+                documents = data;
+                
+                // Index erstellen
+                idx = lunr(function() {
+                    this.ref('id');
+                    this.field('title');
+                    this.field('content');
+
+                    Object.entries(data).forEach(([id, doc]) => {
+                        this.add({
+                            id: id,
+                            title: doc.title,
+                            content: doc.content
+                        });
+                    });
+                });
             });
 
         // Suchfunktion
