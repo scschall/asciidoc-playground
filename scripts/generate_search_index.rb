@@ -1,5 +1,6 @@
 require 'json'
 require 'asciidoctor'
+require 'fileutils'
 
 def extract_content(file)
   content = File.read(file)
@@ -12,6 +13,9 @@ def extract_content(file)
     'preview' => doc.convert.gsub(/<[^>]*>/, ' ').gsub(/\s+/, ' ').strip[0..200] + '...'
   }
 end
+
+# Verzeichnis erstellen
+FileUtils.mkdir_p('_site')
 
 # Alle AsciiDoc Dateien finden
 adoc_files = Dir.glob('*.adoc')
@@ -32,8 +36,17 @@ lunr_docs = documents.map do |id, doc|
   }
 end
 
-# Index als JavaScript-Datei speichern
+# Temporäre JSON-Datei für lunr-index-build erstellen
+File.write('_site/temp_docs.json', JSON.generate(lunr_docs))
+
+# Lunr Index mit korrekten Parametern generieren
+index = `npx lunr-index-build -r id -f title -f content < _site/temp_docs.json`
+
+# Finale JSON-Datei mit Dokumenten und Index speichern
 File.write('_site/search-index.json', JSON.generate({
   'documents' => documents,
-  'index' => `npx lunr-index-build --fields title,content --documents '#{JSON.generate(lunr_docs)}'`
-})) 
+  'index' => JSON.parse(index)
+}))
+
+# Temporäre Datei löschen
+FileUtils.rm('_site/temp_docs.json') 
