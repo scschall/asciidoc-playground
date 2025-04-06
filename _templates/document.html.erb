@@ -39,9 +39,14 @@
             border: 1px solid #ddd;
             background: white;
         }
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
     </style>
 </head>
-<body class="<%= [(attr :doctype),*((attr :role)&.split(' '))]* ' ' %>"<%= (attr? :max-width) ? %( style="max-width: #{attr 'max-width'};") : nil %>>
+<body class="<%= attr :doctype %>">
     <div id="search-container">
         <input type="text" id="search-input" placeholder="Suchen...">
         <div id="search-results"></div>
