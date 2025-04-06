@@ -39,7 +39,6 @@ jobs:
           mkdir -p _site
           asciidoctor \
             -T _templates \
-            -r ./extensions/yaml_table.rb \
             -D _site \
             *.adoc
           cp -r images _site/ || true
