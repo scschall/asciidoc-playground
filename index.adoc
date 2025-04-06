@@ -13,3 +13,10 @@ This is a playground for me to try out new things.
 Important text.
 
 include::tools.adoc[]
+
+== Include list from YAML
+
+[%yaml,cols="1,2",options="header,autowidth,frame=none"]
+|===
+include::list.yaml[]
+|===
