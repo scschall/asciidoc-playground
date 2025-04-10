@@ -26,3 +26,15 @@ include::list.yaml[]
 ,===
 include::list.yaml[]
 ,===
+
+//little-doc-helper remember azure-organization
+== scschall
+
+//little-doc-helper remember azure-project
+=== einprojekt
+
+//little-doc-helper maintain azure-devops-project-admins
+. bob
+. alice
+
+Alles wird gut.

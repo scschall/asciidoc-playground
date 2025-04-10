@@ -44,26 +44,24 @@ pub struct UserResponse {
 
 pub struct AzureDevOpsClient {
     client: reqwest::Client,
-    organization: String,
     auth: String,
 }
 
 impl AzureDevOpsClient {
-    pub fn new(organization: String, pat: String) -> Self {
+    pub fn new(pat: String) -> Self {
         let client = reqwest::Client::new();
         let auth = format!("Basic {}", base64::encode(format!(":{}", pat)));
         
         Self {
             client,
-            organization,
             auth,
         }
     }
 
-    pub async fn get_security_namespaces(&self) -> Result<Vec<SecurityNamespace>, Box<dyn Error>> {
+    pub async fn get_security_namespaces(&self, organization: &str) -> Result<Vec<SecurityNamespace>, Box<dyn Error>> {
         let url = format!(
             "https://dev.azure.com/{}/_apis/securitynamespaces?api-version=7.1-preview.1",
-            self.organization
+            organization
         );
 
         let response_text = self.client
@@ -78,10 +76,10 @@ impl AzureDevOpsClient {
         Ok(response.value)
     }
 
-    pub async fn get_groups(&self) -> Result<Vec<GroupInfo>, Box<dyn Error>> {
+    pub async fn get_groups(&self, organization: &str) -> Result<Vec<GroupInfo>, Box<dyn Error>> {
         let url = format!(
             "https://vssps.dev.azure.com/{}/_apis/graph/groups?api-version=5.1-preview.1",
-            self.organization
+            organization
         );
 
         let response_text = self.client
@@ -96,10 +94,10 @@ impl AzureDevOpsClient {
         Ok(response.value)
     }
 
-    pub async fn get_group_members(&self, group_descriptor: &str) -> Result<Vec<Membership>, Box<dyn Error>> {
+    pub async fn get_group_members(&self, organization: &str, group_descriptor: &str) -> Result<Vec<Membership>, Box<dyn Error>> {
         let url = format!(
             "https://vssps.dev.azure.com/{}/_apis/graph/memberships/{}?direction=down&api-version=5.1-preview.1",
-            self.organization,
+            organization,
             group_descriptor
         );
 
@@ -115,10 +113,10 @@ impl AzureDevOpsClient {
         Ok(response.value)
     }
 
-    pub async fn get_user(&self, user_descriptor: &str) -> Result<UserResponse, Box<dyn Error>> {
+    pub async fn get_user(&self, organization: &str, user_descriptor: &str) -> Result<UserResponse, Box<dyn Error>> {
         let url = format!(
             "https://vssps.dev.azure.com/{}/_apis/graph/users/{}?api-version=5.1-preview.1",
-            self.organization,
+            organization,
             user_descriptor
         );
 
