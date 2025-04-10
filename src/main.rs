@@ -25,11 +25,20 @@ async fn update_admins_in_file(content: &str, client: &AzureDevOpsClient) -> Res
 
             // Get admins from Azure DevOps
             let groups = client.get_groups(organization).await?;
-            let project_admin_group = groups.iter()
-                .find(|g| g.displayName.ends_with("Project Administrators"))
-                .expect("Project Administrators group not found");
+            println!("Found groups: {:?}", groups);
+            
+            let project_admin_groups: Vec<_> = groups.iter()
+                .filter(|g| {
+                    g.displayName.ends_with("Project Administrators") || 
+                    g.displayName.contains(&format!("{} Project Administrators", project))
+                })
+                .collect();
 
-            let members = client.get_group_members(organization, &project_admin_group.descriptor).await?;
+            println!("Found admin groups: {:?}", project_admin_groups);
+
+            if project_admin_groups.is_empty() {
+                println!("Warning: No Project Administrator groups found!");
+            }
 
             // Add the comment line
             updated_content.push_str(line);
@@ -44,10 +53,13 @@ async fn update_admins_in_file(content: &str, client: &AzureDevOpsClient) -> Res
                 }
             }
 
-            // Add new admin list
-            for member in members {
-                let user = client.get_user(organization, &member.memberDescriptor).await?;
-                updated_content.push_str(&format!(". {}\n", user.displayName));
+            // Add new admin list from all groups
+            for group in project_admin_groups {
+                let members = client.get_group_members(organization, &group.descriptor).await?;
+                for member in members {
+                    let user = client.get_user(organization, &member.memberDescriptor).await?;
+                    updated_content.push_str(&format!(". {}\n", user.displayName));
+                }
             }
         } else {
             updated_content.push_str(line);
