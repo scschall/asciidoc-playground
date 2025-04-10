@@ -49,6 +49,22 @@ struct GroupInfo {
     originId: String,
 }
 
+#[derive(Debug, Deserialize)]
+struct MembershipResponse {
+    value: Vec<Membership>
+}
+
+#[derive(Debug, Deserialize)]
+struct Membership {
+    memberDescriptor: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct UserResponse {
+    displayName: String,
+    mailAddress: Option<String>,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let organization = env::var("AZURE_DEVOPS_ORG")?;
@@ -178,6 +194,32 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .text()
         .await?;
     println!("Group memberships response: {}", response_text);
+    // list all members of the project administrators group
+    let members: MembershipResponse = serde_json::from_str(&response_text)?;
+    println!("Members: {:?}", members);
+
+    // Get user info for each member
+    for membership in members.value {
+        let url = format!(
+            "https://vssps.dev.azure.com/{}/_apis/graph/users/{}?api-version=5.1-preview.1",
+            organization,
+            membership.memberDescriptor
+        );
+
+        let user_response = client
+            .get(&url)
+            .header("Authorization", &auth)
+            .send()
+            .await?
+            .text()
+            .await?;
+        
+        let user: UserResponse = serde_json::from_str(&user_response)?;
+        println!("User: {} ({})", 
+            user.displayName,
+            user.mailAddress.unwrap_or_else(|| "No email".to_string())
+        );
+    }
 
     Ok(())
 }
