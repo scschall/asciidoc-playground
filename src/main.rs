@@ -67,6 +67,7 @@ async fn update_admins_in_file(
             }
 
             // Add new admin list from all groups
+            let mut admins = Vec::new();
             for group in project_admin_groups {
                 let members = client
                     .get_group_members(organization, &group.descriptor)
@@ -75,12 +76,20 @@ async fn update_admins_in_file(
                     let user = client
                         .get_user(organization, &member.memberDescriptor)
                         .await?;
-                    updated_content.push_str(&format!(
-                        ". {} ({})\n",
-                        user.displayName,
-                        user.mailAddress.unwrap_or("".to_string())
-                    ));
+                    admins.push((user.displayName, user.mailAddress));
                 }
+            }
+
+            // Sort admins by display name
+            admins.sort_by(|a, b| a.0.to_lowercase().cmp(&b.0.to_lowercase()));
+
+            // Add sorted list to output
+            for (name, email) in admins {
+                updated_content.push_str(&format!(
+                    ". {} ({})\n",
+                    name,
+                    email.unwrap_or("".to_string())
+                ));
             }
         } else {
             updated_content.push_str(line);
