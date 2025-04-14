@@ -24,6 +24,7 @@ pub struct GroupInfo {
     pub description: Option<String>,
     pub descriptor: String,
     pub originId: String,
+    pub principalName: String,
 }
 
 #[derive(Debug, Deserialize)]

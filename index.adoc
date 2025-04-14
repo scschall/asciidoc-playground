@@ -37,4 +37,11 @@ include::list.yaml[]
 . bob
 . alice
 
+//little-doc-helper remember azure-project
+=== oneproject
+
+//little-doc-helper maintain azure-devops-project-admins
+. bob
+. alice
+
 Alles wird gut.
