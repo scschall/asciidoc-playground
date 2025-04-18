@@ -11,36 +11,35 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4.2.2
 
-      - name: Install Dependencies
+      - uses: cachix/install-nix-action@6004951b182f8860210c8d6cc0b963a4d1ba150f # ratchet:cachix/install-nix-action@v25
+      
+      - name: Build with Nix
         run: |
-          sudo apt-get update
-          sudo apt-get install -y pkg-config musl-tools musl-dev
-          sudo apt-get install -y --no-install-recommends libssl-dev
-
-      - name: Setup Rust
-        uses: actions-rs/toolchain@b2417cde72dcf67f306c0ae8e0828a81bf0b189f # ratchet:actions-rs/toolchain@v1.0.6
-        with:
-          toolchain: stable
-          target: x86_64-unknown-linux-musl
-
-      - name: Build Release Binary
-        run: |
-          cargo build --release --target x86_64-unknown-linux-musl
-          strip target/x86_64-unknown-linux-musl/release/azure-devops-admins
+          nix-build -E '
+            with import <nixpkgs> {};
+            rustPlatform.buildRustPackage {
+              pname = "azure-devops-admins";
+              version = "0.1.0";
+              src = ./.;
+              cargoLock.lockFile = ./Cargo.lock;
+              nativeBuildInputs = [ pkg-config ];
+              buildInputs = [ openssl.static ];
+              OPENSSL_STATIC = "1";
+              OPENSSL_LIB_DIR = "${openssl.static}/lib";
+              OPENSSL_INCLUDE_DIR = "${openssl.static}/include";
+            }'
+          cp result/bin/azure-devops-admins .
 
       - name: Create Release
         uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda # ratchet:softprops/action-gh-release@v2.2.1
         with:
-          files: target/x86_64-unknown-linux-musl/release/azure-devops-admins
+          files: azure-devops-admins
 
       - name: Upload Binary as Artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # ratchet:actions/upload-artifact@v4.6.2
         with:
           name: azure-devops-admins
-          path: target/x86_64-unknown-linux-musl/release/azure-devops-admins
+          path: azure-devops-admins
