@@ -1,0 +1,48 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'sammelwut'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=sammelwut",
+                    "--package=sammelwut"
+                ],
+                "filter": {
+                    "name": "sammelwut",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "search-by-name",
+                "Emma Watson"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'sammelwut'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=sammelwut",
+                    "--package=sammelwut"
+                ],
+                "filter": {
+                    "name": "sammelwut",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

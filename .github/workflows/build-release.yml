@@ -1,0 +1,40 @@
+name: Build and Release
+
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: x86_64-unknown-linux-musl
+
+      - name: Build Release Binary
+        run: |
+          cargo build --release --target x86_64-unknown-linux-musl
+          strip target/x86_64-unknown-linux-musl/release/azure-devops-admins
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: target/x86_64-unknown-linux-musl/release/azure-devops-admins
+          
+      - name: Upload Binary as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: azure-devops-admins
+          path: target/x86_64-unknown-linux-musl/release/azure-devops-admins 
