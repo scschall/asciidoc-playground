@@ -1,0 +1,47 @@
+name: Update Azure DevOps Admins PR
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Jeden Montag um 8:00 UTC
+  workflow_dispatch:  # Erlaubt manuelle Ausführung
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Build and run admin checker
+        env:
+          AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
+        run: |
+          cargo run > new_content.txt
+          if ! diff index.adoc new_content.txt > /dev/null; then
+            echo "ADMINS_CHANGED=true" >> $GITHUB_ENV
+            cp new_content.txt index.adoc
+          fi
+
+      - name: Create Pull Request
+        if: env.ADMINS_CHANGED == 'true'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: Update Azure DevOps admin list
+          title: Update Azure DevOps admin list
+          body: |
+            Automatische Aktualisierung der Azure DevOps Administrator Liste.
+            
+            Diese Änderung wurde automatisch durch den GitHub Action Workflow erstellt.
+          branch: update-admin-list
+          delete-branch: true
+          labels: |
+            automated-pr
+            admin-list-update 
