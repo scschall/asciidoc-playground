@@ -20,12 +20,12 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pkg-config=0.29.2-1ubuntu3 musl-tools=1.2.3-1 musl-dev=1.2.3-1
-          sudo apt-get install -y --no-install-recommends libssl-dev=3.0.2-0ubuntu1.12
+          sudo apt-get install -y pkg-config musl-tools musl-dev
+          sudo apt-get install -y --no-install-recommends
 
       - name: Install musl-openssl
         run: |
-          OPENSSL_VERSION=3.0.2
+          OPENSSL_VERSION=3.5.0
           wget https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz
           tar xvf openssl-$OPENSSL_VERSION.tar.gz
           cd openssl-$OPENSSL_VERSION
