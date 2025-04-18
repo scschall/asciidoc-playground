@@ -20,7 +20,7 @@ jobs:
           name: azure-devops-admins
           github-token: ${{ secrets.FINE_GRAINED_PAT }}
           repository: ${{ github.repository }}
-          search-artifacts: true  # Sucht in allen Workflows nach dem neuesten Artifact
+          run-id: 14538234670
           path: .
 
       - name: Make Binary Executable
