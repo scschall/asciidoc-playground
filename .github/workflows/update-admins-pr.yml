@@ -1,7 +1,7 @@
 name: Update Azure DevOps Admins PR
 
 on:
-  workflow_dispatch: # Erlaubt manuelle Ausführung
+  workflow_dispatch:
 
 permissions: {} # remove default permissions
 
@@ -18,9 +18,7 @@ jobs:
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # ratchet:actions/download-artifact@v4.2.1
         with:
           name: azure-devops-admins
-          repository: ${{ github.repository }}
           github-token: ${{ secrets.FINE_GRAINED_PAT }}
-          path: .
 
       - name: Make Binary Executable
         run: chmod +x azure-devops-admins
