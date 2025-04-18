@@ -19,6 +19,9 @@ jobs:
         with:
           name: azure-devops-admins
           github-token: ${{ secrets.FINE_GRAINED_PAT }}
+          repository: ${{ github.repository }}
+          search-artifacts: true  # Sucht in allen Workflows nach dem neuesten Artifact
+          path: .
 
       - name: Make Binary Executable
         run: chmod +x azure-devops-admins
@@ -27,6 +30,8 @@ jobs:
         env:
           AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
         run: |
+          ls -lh azure-devops-admins
+          file azure-devops-admins
           ./azure-devops-admins
           if git diff --quiet index.adoc; then
             echo "No changes detected"
