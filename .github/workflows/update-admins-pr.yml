@@ -5,15 +5,16 @@ on:
     - cron: '0 8 * * 1'  # Jeden Montag um 8:00 UTC
   workflow_dispatch:  # Erlaubt manuelle Ausführung
 
+permissions: {}  # remove default permissions
+
 jobs:
   create-pr:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.FINE_GRAINED_PAT }}
 
       - name: Setup Rust
         uses: actions-rs/toolchain@v1
@@ -34,7 +35,7 @@ jobs:
         if: env.ADMINS_CHANGED == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.FINE_GRAINED_PAT }}
           commit-message: Update Azure DevOps admin list
           title: Update Azure DevOps admin list
           body: |
