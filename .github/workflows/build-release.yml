@@ -23,21 +23,13 @@ jobs:
         run: |
           nix-build -E '
             with import <nixpkgs> {};
-            let
-              staticOpenssl = pkgsStatic.openssl;
-            in
             rustPlatform.buildRustPackage {
               pname = "azure-devops-admins";
               version = "0.1.0";
               src = ./.;
               cargoLock.lockFile = ./Cargo.lock;
               nativeBuildInputs = [ pkg-config ];
-              buildInputs = [ staticOpenssl ];
-              OPENSSL_STATIC = "1";
-              OPENSSL_LIB_DIR = "${staticOpenssl}/lib";
-              OPENSSL_INCLUDE_DIR = "${staticOpenssl}/include";
-              RUSTFLAGS = "-C target-feature=+crt-static";
-              CARGO_BUILD_TARGET = "x86_64-unknown-linux-musl";
+              buildInputs = [ openssl ];
             }'
           cp result/bin/azure-devops-admins .
 
