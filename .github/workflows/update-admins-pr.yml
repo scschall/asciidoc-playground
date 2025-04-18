@@ -15,9 +15,11 @@ jobs:
           token: ${{ secrets.FINE_GRAINED_PAT }}
 
       - name: Download Admin Checker
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # ratchet:actions/upload-artifact@v4.6.2
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # ratchet:actions/download-artifact@v4.2.1
         with:
           name: azure-devops-admins
+          repository: ${{ github.repository }}
+          github-token: ${{ secrets.FINE_GRAINED_PAT }}
           path: .
 
       - name: Make Binary Executable
@@ -36,7 +38,7 @@ jobs:
 
       - name: Create Pull Request
         if: env.ADMINS_CHANGED == 'true'
-        uses: peter-evans/create-pull-request@4e1beaa7521e8b457b572c090b25bd3db56bf1c5 # ratchet:peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # ratchet:peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.FINE_GRAINED_PAT }}
           commit-message: Update Azure DevOps admin list
