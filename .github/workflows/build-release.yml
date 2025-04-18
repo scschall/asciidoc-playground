@@ -34,7 +34,7 @@ jobs:
           files: target/x86_64-unknown-linux-musl/release/azure-devops-admins
           
       - name: Upload Binary as Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: azure-devops-admins
           path: target/x86_64-unknown-linux-musl/release/azure-devops-admins 
