@@ -1,31 +1,33 @@
 name: Update Azure DevOps Admins PR
 
 on:
-  schedule:
-    - cron: '0 8 * * 1'  # Jeden Montag um 8:00 UTC
-  workflow_dispatch:  # Erlaubt manuelle Ausführung
+  workflow_dispatch: # Erlaubt manuelle Ausführung
 
-permissions: {}  # remove default permissions
+permissions: {} # remove default permissions
 
 jobs:
   create-pr:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4.2.2
         with:
           token: ${{ secrets.FINE_GRAINED_PAT }}
 
-      - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+      - name: Download Admin Checker
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # ratchet:actions/upload-artifact@v4.6.2
         with:
-          toolchain: stable
+          name: azure-devops-admins
+          path: .
 
-      - name: Build and run admin checker
+      - name: Make Binary Executable
+        run: chmod +x azure-devops-admins
+
+      - name: Run Admin Checker
         env:
           AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
         run: |
-          cargo run
+          ./azure-devops-admins
           if git diff --quiet index.adoc; then
             echo "No changes detected"
           else
@@ -34,17 +36,16 @@ jobs:
 
       - name: Create Pull Request
         if: env.ADMINS_CHANGED == 'true'
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@4e1beaa7521e8b457b572c090b25bd3db56bf1c5 # ratchet:peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.FINE_GRAINED_PAT }}
           commit-message: Update Azure DevOps admin list
           title: Update Azure DevOps admin list
           body: |
             Automatische Aktualisierung der Azure DevOps Administrator Liste.
-            
+
             Diese Änderung wurde automatisch durch den GitHub Action Workflow erstellt.
           branch: update-admin-list
           delete-branch: true
-          labels: |
-            automated-pr
-            admin-list-update 
+          labels: "automated-pr\nadmin-list-update "
+
