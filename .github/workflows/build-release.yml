@@ -6,6 +6,7 @@ on:
       - 'src/**'
       - 'Cargo.toml'
       - 'Cargo.lock'
+      - '.github/workflows/build-release.yml'
   workflow_dispatch:
 
 jobs:
@@ -23,9 +24,7 @@ jobs:
           nix-build -E '
             with import <nixpkgs> {};
             let
-              staticOpenssl = openssl.override {
-                static = true;
-              };
+              staticOpenssl = pkgs.pkgsStatic.openssl;
             in
             rustPlatform.buildRustPackage {
               pname = "azure-devops-admins";
@@ -35,7 +34,7 @@ jobs:
               nativeBuildInputs = [ pkg-config ];
               buildInputs = [ staticOpenssl ];
               OPENSSL_STATIC = "1";
-              OPENSSL_DIR = "${staticOpenssl.dev}";
+              OPENSSL_DIR = "${staticOpenssl}";
               RUSTFLAGS = "-C target-feature=+crt-static";
               CARGO_BUILD_TARGET = "x86_64-unknown-linux-musl";
             }'
