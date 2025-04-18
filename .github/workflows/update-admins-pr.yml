@@ -25,10 +25,11 @@ jobs:
         env:
           AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
         run: |
-          cargo run > new_content.txt
-          if ! diff index.adoc new_content.txt > /dev/null; then
+          cargo run
+          if git diff --quiet index.adoc; then
+            echo "No changes detected"
+          else
             echo "ADMINS_CHANGED=true" >> $GITHUB_ENV
-            cp new_content.txt index.adoc
           fi
 
       - name: Create Pull Request

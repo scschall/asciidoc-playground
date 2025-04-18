@@ -40,14 +40,11 @@ async fn update_admins_in_file(
 
             // Get admins from Azure DevOps
             let groups = client.get_groups(organization).await?;
-            println!("Found groups: {:?}", groups);
 
             let project_admin_groups: Vec<_> = groups
                 .iter()
                 .filter(|g| g.principalName == format!("[{}]\\Project Administrators", project))
                 .collect();
-
-            println!("Found admin groups: {:?}", project_admin_groups);
 
             if project_admin_groups.is_empty() {
                 println!("Warning: No Project Administrator groups found!");
@@ -108,6 +105,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let content = fs::read_to_string("index.adoc")?;
     let updated_content = update_admins_in_file(&content, &client).await?;
 
-    println!("{}", updated_content);
+    // write updated content to file
+    fs::write("index.adoc", updated_content)?;
     Ok(())
 }
