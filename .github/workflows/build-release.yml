@@ -15,10 +15,15 @@ jobs:
       contents: write
     
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.1.1
+
+      - name: Install OpenSSL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config=0.29.2-1ubuntu3 libssl-dev=3.0.2-0ubuntu1.12
 
       - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@v1.0.7
         with:
           toolchain: stable
           target: x86_64-unknown-linux-musl
@@ -29,12 +34,12 @@ jobs:
           strip target/x86_64-unknown-linux-musl/release/azure-devops-admins
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v1.1.0
         with:
           files: target/x86_64-unknown-linux-musl/release/azure-devops-admins
           
       - name: Upload Binary as Artifact
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v4.3.1
         with:
           name: azure-devops-admins
           path: target/x86_64-unknown-linux-musl/release/azure-devops-admins 
