@@ -17,10 +17,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4.1.1
 
-      - name: Install OpenSSL
+      - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pkg-config=0.29.2-1ubuntu3 libssl-dev=3.0.2-0ubuntu1.12
+          sudo apt-get install -y pkg-config=0.29.2-1ubuntu3 musl-tools=1.2.3-1 musl-dev=1.2.3-1
+          sudo apt-get install -y --no-install-recommends libssl-dev=3.0.2-0ubuntu1.12
+          
+      - name: Install musl-openssl
+        run: |
+          OPENSSL_VERSION=3.0.2
+          wget https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz
+          tar xvf openssl-$OPENSSL_VERSION.tar.gz
+          cd openssl-$OPENSSL_VERSION
+          CC=musl-gcc ./Configure no-shared no-async --prefix=/usr/local/musl --openssldir=/usr/local/musl linux-x86_64
+          make -j$(nproc)
+          sudo make install
+          echo "OPENSSL_DIR=/usr/local/musl" >> $GITHUB_ENV
+          echo "OPENSSL_STATIC=1" >> $GITHUB_ENV
 
       - name: Setup Rust
         uses: actions-rs/toolchain@v1.0.7
