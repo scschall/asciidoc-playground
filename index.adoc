@@ -34,14 +34,13 @@ include::list.yaml[]
 === einprojekt
 
 //little-doc-helper maintain azure-devops-project-admins
-. bob
-. alice
+. sc_schall (sc_schall@gmx.net)
 
 //little-doc-helper remember azure-project
 === oneproject
 
 //little-doc-helper maintain azure-devops-project-admins
-. bob
-. alice
+. sc_schall (sc_schall@gmx.net)
+. sebastian.schall@philips.com (sebastian.schall@philips.com)
 
 Alles wird gut.
