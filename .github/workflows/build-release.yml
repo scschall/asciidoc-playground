@@ -22,17 +22,22 @@ jobs:
         run: |
           nix-build -E '
             with import <nixpkgs> {};
+            let
+              staticOpenssl = openssl.override {
+                static = true;
+              };
+            in
             rustPlatform.buildRustPackage {
               pname = "azure-devops-admins";
               version = "0.1.0";
               src = ./.;
               cargoLock.lockFile = ./Cargo.lock;
               nativeBuildInputs = [ pkg-config ];
-              buildInputs = [ openssl ];
+              buildInputs = [ staticOpenssl ];
               OPENSSL_STATIC = "1";
-              OPENSSL_DIR = "${pkgs.openssl.dev}";
-              OPENSSL_INCLUDE_DIR = "${pkgs.openssl.dev}/include";
-              OPENSSL_LIB_DIR = "${pkgs.openssl.out}/lib";
+              OPENSSL_DIR = "${staticOpenssl.dev}";
+              OPENSSL_INCLUDE_DIR = "${staticOpenssl.dev}/include";
+              OPENSSL_LIB_DIR = "${staticOpenssl.out}/lib";
             }'
           cp result/bin/azure-devops-admins .
 
