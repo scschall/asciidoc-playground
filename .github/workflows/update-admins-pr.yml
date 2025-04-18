@@ -34,7 +34,7 @@ jobs:
         env:
           AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
         run: |
-          nix-shell -p glibc --run "
+          nix-shell -p glibc openssl --run "
             ./azure-devops-admins
             if git diff --quiet index.adoc; then
               echo 'No changes detected'
