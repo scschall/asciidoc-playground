@@ -40,7 +40,9 @@ jobs:
               echo 'No changes detected'
             else
               echo 'ADMINS_CHANGED=true' >> \$GITHUB_ENV
+              
             fi
+            rm azure-devops-admins  # Remove the binary before creating the PR
           "
 
       - name: Create Pull Request
