@@ -3,8 +3,6 @@
         ".": {
             "changelog-path": "CHANGELOG.md",
             "release-type": "rust",
-            "bump-minor-pre-major": true,
-            "bump-patch-for-minor-pre-major": true,
             "draft": false,
             "prerelease": false,
             "changelog-sections": [
@@ -21,8 +19,10 @@
     },
     "bootstrap-sha": "main",
     "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
-    "commit-search-depth": 50,
-    "include-v-in-tag": true,
-    "pull-request-header": "Automated Release PR",
-    "pull-request-title-pattern": "chore${scope}: release${component} ${version}"
+    "separate-pull-requests": false,
+    "always-link-local": false,
+    "skip-github-release": false,
+    "initial-version": "0.1.0",
+    "release-search-depth": 1,
+    "include-component-in-tag": false
 }
